@@ -15,7 +15,7 @@
  *
  */
 
-package com.wangdi.onesec.utils;
+package com.wangdi.onesec.data;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.zip.DataFormatException;
 
 import com.wangdi.onesec.NotImplementException;
+import com.wangdi.onesec.utils.BasicUtils;
 
 import androidx.annotation.NonNull;
 

@@ -61,8 +61,6 @@ public final class FileHelper
 
         if (name.contains("main") || name.contains("test") && !name.contains("pool"))
             throw new RuntimeException("IO operation cannot run in Main thread");
-
-        System.out.println(Thread.currentThread().getName());
     }
 
     public FileHelper()

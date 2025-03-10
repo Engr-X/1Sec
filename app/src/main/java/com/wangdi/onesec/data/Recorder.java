@@ -15,7 +15,7 @@
  *
  */
 
-package com.wangdi.onesec.utils;
+package com.wangdi.onesec.data;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +35,8 @@ import androidx.annotation.NonNull;
 
 import com.wangdi.onesec.AsyncTask;
 import com.wangdi.onesec.SyncTask;
+import com.wangdi.onesec.utils.BasicUtils;
+import com.wangdi.onesec.utils.FileHelper;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
