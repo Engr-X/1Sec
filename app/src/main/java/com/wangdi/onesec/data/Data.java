@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025, [1Sec team]. All rights reserved.
  *
  *
@@ -46,12 +46,69 @@ import org.json.JSONObject;
 
 public class Data
 {
+    public static final class Statics<T>
+    {
+        public T current;
+        public T best;
+        public T worst;
+        public T average;
+
+        public Statics()
+        {
+            this(null, null, null, null);
+        }
+
+        public Statics(T best, T worst, T average)
+        {
+            this(null, best, worst, average);
+        }
+
+        public Statics(T current, T best, T worst, T average)
+        {
+            this.current = current;
+            this.best = best;
+            this.worst = worst;
+            this.average = average;
+        }
+
+        /**
+         * Updates the statistics with the provided values.
+         * This method sets the current, best, worst, and average values of the statistics
+         * to the specified values.
+         *
+         * @param current       the current value to set
+         * @param best          the best value to set
+         * @param worst         the worst value to set
+         * @param average       the average value to set
+         */
+        public void update(T current, T best, T worst, T average)
+        {
+            this.current = current;
+            this.best = best;
+            this.worst = worst;
+            this.average = average;
+        }
+    }
+
+    /**
+     * If the given Double value is null or DNF, return null; otherwise return the value itself.
+     *
+     * @param value             the Double value to be formatted
+     * @return                  the formatted Double value
+     */
+    public static Double format(Double value)
+    {
+        return (value == null || value == DNF) ? null : value;
+    }
+
     public static final byte GENERAL_DATA_TYPE = -1;
     public static final byte NUMBER_RESPONSE_TYPE = 0;
 
     public static final byte BETTER = 1;
     public static final byte EQUALS = 0;
     public static final byte WORSE = -1;
+
+    public static final double DNF = Double.POSITIVE_INFINITY;
 
     public static final String NUMBER_RESPONSE_SERIAL = "serial";
     public static final String NUMBER_RESPONSE_TIME = "time";
@@ -139,7 +196,6 @@ public class Data
      * 
      * @throws Exception       if the key is not part of the predefined parameters
      */
-
     public void set(final String key, final Object value) throws Exception
     {
         if (this.parameters.contains(key))
@@ -149,6 +205,16 @@ public class Data
         }
         else
             throw new DataFormatException(BasicUtils.combined("Data format error: additional ", key, " is given."));
+    }
+
+    /**
+     * Returns whether the Data object is valid or not.
+     * 
+     * @return                  whether the Data object is valid or not
+     */
+    public boolean isValid() throws Exception
+    {
+        return true;
     }
 
     /**
@@ -227,6 +293,7 @@ public class Data
         return this.json.toString();
     }
 
+    // if the time is Double.Max, it will be DNF
     public static final class NumberResponse extends Data
     {
         private NumberResponse()
@@ -247,6 +314,27 @@ public class Data
             }});
         }
 
+        public NumberResponse(int numberSerial) throws Exception
+        {
+            super(NUMBER_RESPONSE_PARAM, new HashMap<>() {{
+                this.put(NUMBER_RESPONSE_SERIAL, numberSerial);
+                this.put(NUMBER_RESPONSE_TIME, null);
+            }});
+        }
+
+        /**
+         * Returns whether the Data object is valid or not.
+         * A Data object is valid if it is not DNF.
+         * 
+         * @return                  whether the Data object is valid or not
+         * @throws Exception        if error occurs, for example no such data type
+         */
+        @Override
+        public boolean isValid() throws Exception
+        {
+            return !this.getIsDNF();
+        }
+
         /**
          * Gets the data type of this NumberResponse object.
          *
@@ -258,6 +346,14 @@ public class Data
             return NUMBER_RESPONSE_TYPE;
         }
 
+        /**
+         * Compares this NumberResponse object with the given NumberResponse object.
+         * 
+         * @param other         the NumberResponse object to compare with
+         * @return              a negative integer, zero, or a positive integer as this NumberResponse object is less than, equal to, or greater than the given NumberResponse object
+         * 
+         * @throws Exception    if error occurs, for example no such data type
+         */
         @Override
         public byte compare(final Data other) throws Exception
         {
@@ -283,14 +379,46 @@ public class Data
             return EQUALS;
         }
 
-        private int getSerial() throws Exception
+        /**
+         * Gets the serial number of the number in the number test session.
+         *
+         * @return              the serial number of the number in the number test session
+         * @throws Exception    if error occurs, for example JSON does not contain the key
+         */
+        public int getSerial() throws Exception
         {
             return this.json.getInt(NUMBER_RESPONSE_SERIAL);
         }
 
-        private double getTime() throws Exception
+        /**
+         * Gets the time cost to finish the number in the number test session.
+         *
+         * @return              the time cost to finish the number in the number test session
+         * @throws Exception    if error occurs, for example JSON does not contain the key
+         */
+        public double getTime() throws Exception
         {
-            return this.json.getDouble(NUMBER_RESPONSE_TIME);
+            if (this.content.containsKey(NUMBER_RESPONSE_TIME))
+            {
+                final Object value = this.content.get(NUMBER_RESPONSE_TIME);
+                return value == null ? DNF : (Double)(value);
+            }
+
+            return DNF;
+        }
+
+        /**
+         * Gets whether the user did not finish the session.
+         *
+         * @return              whether the user did not finish the session
+         * @throws Exception    if error occurs, for example JSON does not contain the key
+         */
+        private boolean getIsDNF() throws Exception
+        {
+            if (this.content.containsKey(NUMBER_RESPONSE_TIME))
+                return this.content.get(NUMBER_RESPONSE_TIME) == null;
+
+            return true;
         }
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025, [1Sec team]. All rights reserved.
  *
  *

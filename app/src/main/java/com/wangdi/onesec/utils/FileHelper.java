@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025, [1Sec team]. All rights reserved.
  *
  *
@@ -69,7 +69,7 @@ public final class FileHelper
     }
 
     /**
-     * Write the given content to the given file.
+     * Write the given content to the given file in ui thread.
      * 
      * @param file              target file
      * @param content           content to write
@@ -119,7 +119,7 @@ public final class FileHelper
     }
 
     /**
-     * Create a new directory or directories. eg a/b/c, will create folder a, folder a/b, folder a/b/c
+     * Create a new directory or directories in ui thread. eg a/b/c, will create folder a, folder a/b, folder a/b/c.
      * 
      * @param directory         target file
      * @return                  whether the directory is created successfully
@@ -134,7 +134,7 @@ public final class FileHelper
     }
 
     /**
-     * Delete the given file.
+     * Delete the given file in ui thread.
      * 
      * @param file              target file
      * @return                  whether the file is deleted successfully
@@ -149,7 +149,7 @@ public final class FileHelper
     }
 
     /**
-     * Delete the specified directory and all of its contents.
+     * Delete the specified directory and all of its contents in ui thread.
      * 
      * @param directory         target directory to delete
      * @param deleteRoot        if true, delete all the content in the folder include the root folder.
@@ -183,7 +183,7 @@ public final class FileHelper
     }
 
     /**
-     * Reads the given file and returns its content as a string.
+     * Reads the given file and returns its content as a string in ui thread.
      * 
      * @param file              target file to read
      * @return                  the content of the file as a string
@@ -205,7 +205,7 @@ public final class FileHelper
     }
 
     /**
-     * Lists the files in the given directory.
+     * Lists the files in the given directory in ui thread.
      * 
      * @param directory         target directory to list files from
      * @return                  an array of files in the directory
@@ -219,6 +219,14 @@ public final class FileHelper
         return directory.listFiles();
     }
 
+    /**
+     * Lists the files in the given directory with the given regex in ui thread
+     * 
+     * @param directory         target directory to list files from
+     * @param regex             regex to filter the files
+     * @return                  an array of files in the directory that match the regex
+     * @throws Exception        if error occurs, for example no such directory, permission denied
+     */
     @SyncTask
     public static File[] listFiles(final File directory, String regex) throws Exception
     {

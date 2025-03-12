@@ -32,8 +32,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.javatuples)
     implementation(libs.fastjson2)
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

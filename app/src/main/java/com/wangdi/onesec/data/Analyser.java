@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2025, [1Sec team]. All rights reserved.
  *
  *
@@ -17,10 +17,6 @@
 
 package com.wangdi.onesec.data;
 
-import com.wangdi.onesec.utils.BasicUtils;
-
-import java.util.ArrayList;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,171 +31,58 @@ import java.util.List;
 
 public final class Analyser
 {
-    public static class Tracker
-    {
-        public Double min;
 
-        protected final int size;
-        protected final Deque<Double> dq;
+    public Data.Statics<Double> all;
+    public Data.Statics<Double> MO3;
+    public Data.Statics<Double> AO5;
+    public Data.Statics<Double> AO12;
+    public Data.Statics<Double> AO100;
 
-        protected int sizeCount;
-        protected double sum;
-
-        public Tracker(int size)
-        {
-            this.sum = 0.0;
-            this.size = size;
-            this.sizeCount = 0;
-            this.dq = new LinkedList<>();
-        }
-
-        public Double add(double value)
-        {
-            return null;
-        }
-
-        public static final class MO extends Tracker
-        {
-            public MO(int size)
-            {
-                super(size);
-            }
-
-            @Override
-            public Double add(double value)
-            {
-                dq.add(value);
-                this.sum += value;
-                this.sizeCount++;
-
-                if (this.sizeCount == this.size)
-                {
-                    final double result = this.sum / this.size;
-
-                    if (this.min == null || result < this.min)
-                        this.min = result;
-
-                    return result;
-                }
-
-                if (this.sizeCount > this.size)
-                {
-                    this.sum -= this.dq.pop();
-
-                    final double result = this.sum / this.size;
-
-                    if (result < this.min)
-                        this.min = result;
-
-                    return result;
-                }
-
-                return null;
-            }
-        }
-
-        public static final class AO extends Tracker
-        {
-            private final int realSize;
-            private final List<Double> sort;
-
-            public AO(int size)
-            {
-                super(size);
-                this.realSize = size - 2;
-                this.sort = new ArrayList<>(size);
-            }
-
-            @Override
-            public Double add(double value)
-            {
-                if (this.sizeCount < this.size)
-                {
-                    this.sizeCount++;
-                    this.sum += value;
-                    this.dq.add(value);
-                    this.sort.add(BasicUtils.searchInsert(this.sort, value), value);
-
-                    if (this.sizeCount == this.size)
-                    {
-                        final double result = (this.sum - this.sort.get(0) - this.sort.get(this.size - 1)) / this.realSize;
-
-                        if (this.min == null || result < this.min)
-                            this.min = result;
-
-                        return result;
-                    }
-                }
-
-                if (this.sizeCount >= this.size)
-                {
-                    final double popValue = this.dq.pop();
-                    this.sort.remove(BasicUtils.binarySearch(this.sort, popValue));
-                    this.sum += value - popValue;
-
-                    this.dq.add(value);
-                    this.sort.add(BasicUtils.searchInsert(this.sort, value), value);
-
-                    final double result = (this.sum - this.sort.get(0) - this.sort.get(this.size - 1)) / this.realSize;
-
-                    if (result < this.min)
-                        this.min = result;
-
-                    return result;
-                }
-
-                return null;
-            }
-        }
-    }
-
-    public Double best;
-    public Double average;
-
-    public Double bestMO3;
-    public Double bestAO5;
-    public Double bestAO12;
-    public Double bestAO100;
-    public final List<Double> MO3;
-    public final List<Double> AO5;
-    public final List<Double> AO12;
-    public final List<Double> AO100;
+    public final List<Double> MO3data;
+    public final List<Double> AO5data;
+    public final List<Double> AO12data;
+    public final List<Double> AO100data;
 
     public Analyser(final List<Double> data)
     {
         final Iterator<Double> it = data.iterator();
 
-        this.MO3 = new LinkedList<>();
-        this.AO5 = new LinkedList<>();
-        this.AO12 = new LinkedList<>();
-        this.AO100 = new LinkedList<>();
+        this.MO3data = new LinkedList<>();
+        this.AO5data = new LinkedList<>();
+        this.AO12data = new LinkedList<>();
+        this.AO100data = new LinkedList<>();
 
-        final Tracker mo3 = new Tracker.MO(3);
-        final Tracker ao5 = new Tracker.AO(5);
-        final Tracker ao12 = new Tracker.AO(12);
-        final Tracker ao100 = new Tracker.AO(100);
+        final StreamingAggregator.MO mo3 = new StreamingAggregator.MO(3);
+        final StreamingAggregator.AO ao5 = new StreamingAggregator.AO(5);
+        final StreamingAggregator.AO ao12 = new StreamingAggregator.AO(12);
+        final StreamingAggregator.AO ao100 = new StreamingAggregator.AO(100);
+
+        int effectiveIndex = 0;
+        double average = 0.0;
+        Double best = null, worse = null;
 
         while (it.hasNext())
         {
             final double value = it.next();
 
-            if (this.best == null || value > this.best)
-                this.best = value;
+            if (value != Data.DNF)
+            {
+                average = (average * effectiveIndex + value) / (++effectiveIndex);
 
-            this.average = (this.average == null) ? value : this.average + value;
+                if (best == null || value < best) best = value;
+                if (worse == null || value > best) worse = value;
+            }
 
-            MO3.add(mo3.add(value));
-            AO5.add(ao5.add(value));
-            AO12.add(ao12.add(value));
-            AO100.add(ao100.add(value));
+            MO3data.add(mo3.add(value));
+            AO5data.add(ao5.add(value));
+            AO12data.add(ao12.add(value));
+            AO100data.add(ao100.add(value));
         }
 
-        this.bestMO3 = mo3.min;
-        this.bestAO5 = ao5.min;
-        this.bestAO12 = ao12.min;
-        this.bestAO100 = ao100.min;
-
-        if (this.average != null)
-            this.average /= data.size();
+        this.all = new Data.Statics<>(best, worse, average);
+        this.MO3 = new Data.Statics<>(mo3.getMin(), mo3.getMax(), mo3.getAverage());
+        this.AO5 = new Data.Statics<>(ao5.getMin(), ao5.getMax(), ao5.getAverage());
+        this.AO12 = new Data.Statics<>(ao12.getMin(), ao12.getMax(), ao12.getAverage());
+        this.AO100 = new Data.Statics<>(ao100.getMin(), ao100.getMax(), ao100.getAverage());
     }
 }
