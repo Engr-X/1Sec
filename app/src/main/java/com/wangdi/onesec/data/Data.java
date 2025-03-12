@@ -401,7 +401,7 @@ public class Data
             if (this.content.containsKey(NUMBER_RESPONSE_TIME))
             {
                 final Object value = this.content.get(NUMBER_RESPONSE_TIME);
-                return value == null ? DNF : ((Number)(value)git).doubleValue();
+                return value == null ? DNF : ((Number)(value)).doubleValue();
             }
 
             return DNF;
