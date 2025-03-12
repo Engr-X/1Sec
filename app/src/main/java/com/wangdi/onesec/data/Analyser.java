@@ -31,7 +31,6 @@ import java.util.List;
 
 public final class Analyser
 {
-
     public Data.Statics<Double> all;
     public Data.Statics<Double> MO3;
     public Data.Statics<Double> AO5;

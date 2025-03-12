@@ -47,6 +47,8 @@ import org.json.JSONObject;
  * Furthermore, the recorder have ability to analyse all the data superficially.
  * For example, find the best data it contains.
  * </p>
+ * 
+ * This class's method contain I / O operations, so it should not be called in Main thread.
  *
  *
  * @see NumberResponse
@@ -56,23 +58,15 @@ import org.json.JSONObject;
 
 public class Recorder
 {
-    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(4);
-
-    private static final String VERSION = "1.0";
-    private static final String DATA_FILE_PREFIX = "data";
-    private static final String JSON_EXTENSION_NAME = ".json";
-    private static final String MANIFEST_FILE_NAME = "manifest.json";
-    private static final String DATA_FILE_REGEX = "^data\\d+\\.json$";
-
     public static final String DATA_TYPE_KEY = "data_type";
     public static final String VERSION_KEY = "version";
     public static final String GROUP_SIZE_KEY = "group_size";
     public static final String DATA_SIZE_KEY = "data_size";
 
     public static final String BEST_KEY = "best";
-    public static String AVERAGE_KEY = "average";
-    public static String WORST_KEY = "worst";
-    public static String CURRENT_KEY = "current";
+    public static final String AVERAGE_KEY = "average";
+    public static final String WORST_KEY = "worst";
+    public static final String CURRENT_KEY = "current";
 
     public static final String RECORDS_KEY = "records";
 
@@ -82,13 +76,22 @@ public class Recorder
     public static final String AO12_KEY = "ao12";
     public static final String AO100_KEY = "ao100";
     //only number of effective data, DNF is not included
-    private static final String VALID_SIZE_KEY = "valid_size";
+    public static final String VALID_SIZE_KEY = "valid_size";
+
+    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(4);
+
+    private static final String VERSION = "1.0";
+    private static final String DATA_FILE_PREFIX = "data";
+    private static final String JSON_EXTENSION_NAME = ".json";
+    private static final String MANIFEST_FILE_NAME = "manifest.json";
+    private static final String DATA_FILE_REGEX = "^data\\d+\\.json$";
 
     static
     {
         Runtime.getRuntime().addShutdownHook(new Thread(() ->
         {
-            EXECUTOR.shutdown();
+            System.out.println("Shutting down recorder's executor...");
+            shutdown();
 
             try
             {
@@ -104,7 +107,7 @@ public class Recorder
     }
 
     /**
-     * Create a new recorder in ui thread.
+     * Create a new recorder in ui thread (not recommended use directly).
      * 
      * @param rootDirectory     the target directory to store all the data, must be empty
      * @param groupSize         number of records per file
@@ -131,7 +134,7 @@ public class Recorder
     }
 
     /**
-     * Create a new recorder in specific thread.
+     * Create a new recorder in specific thread (recommended).
      * 
      * @param rootDirectory     the target directory to store all the data, must be empty
      * @param groupSize         number of records per file
@@ -147,7 +150,7 @@ public class Recorder
     }
 
     /**
-     * Loads a recorder from a given directory in ui thread.
+     * Loads a recorder from a given directory in ui thread (not recommended use directly).
      * 
      * @param rootDirectory     the target directory to store all the data
      * @param dataType          the type of data to record
@@ -166,7 +169,7 @@ public class Recorder
     }
 
     /**
-     * Loads a recorder from a given directory in specific thread.
+     * Loads a recorder from a given directory in specific thread (recommended).
      * 
      * @param rootDirectory     the target directory to store all the data
      * @param dataType          the type of data to record
@@ -181,7 +184,7 @@ public class Recorder
     }
 
     /**
-     * Auto create a recover class in ui thread. It will delete some data the root folder contain !!!
+     * Auto create a recover class in ui thread (not recommended use directly). It will delete some data the root folder contain !!!
      * if the root folder is empty create a new recorder instance. If the folder is not empty and does not
      * contain manifest.json, it will delete all the files in th folder and create a new instance.
      * On the other hand it will just load recorder class from directories.
@@ -209,7 +212,7 @@ public class Recorder
     }
 
     /**
-     * Auto create a recover class in specific thread. It will delete some data the root folder contain !!!
+     * Auto create a recover class in specific thread (recommended). It will delete some data the root folder contain !!!
      * if the root folder is empty create a new recorder instance. If the folder is not empty and does not
      * contain manifest.json, it will delete all the files in th folder and create a new instance.
      * On the other hand it will just load recorder class from directories.
@@ -235,29 +238,28 @@ public class Recorder
      * </p>
      */
     @SyncTask
-    private static void shutdown()
+    public static void shutdown()
     {
         EXECUTOR.shutdown();
     }
 
+    protected final int groupSize;
     protected final byte dataType;
+    protected final File rootDirectory;
+    protected final File manifestFile;
+    protected final JSONObject AllJson;
+    protected final List<File> dataFiles;
+
     protected int size ;
     protected int validSize;
-    protected final int groupSize;
     protected Data current;
     protected Data best;
     protected Data worst;
-    protected final File rootDirectory;
-    protected final File manifestFile;
+    protected File currentDataFile;
 
     protected JSONObject manifestJson;
-    protected File currentDataFile;
     protected JSONObject currentDataFileJson;
     protected JSONArray records;
-
-    protected final List<File> dataFiles;
-
-    protected final JSONObject AllJson;
 
     // load from directory
     @SyncTask
@@ -271,7 +273,7 @@ public class Recorder
         this.dataType = (byte)(this.manifestJson.getInt(DATA_TYPE_KEY));
 
         if (this.dataType != dataType)
-            throw new IOException();
+            throw new IOException(BasicUtils.combined("Cannot load from directory, data type unmatched: expected: ", this.dataType, " but given: ", dataType));
 
         this.size = this.manifestJson.getInt(DATA_SIZE_KEY);
         this.validSize = this.manifestJson.getInt(VALID_SIZE_KEY);
@@ -337,7 +339,7 @@ public class Recorder
     }
 
     /**
-     * Adds a new data object to the record in ui thread.
+     * Adds a new data object to the record in ui thread (not recommended use directly).
      * 
      * @param data              the data object to add
      * 
@@ -387,7 +389,7 @@ public class Recorder
     }
 
     /**
-     * Adds a new data object to the record in specific thread.
+     * Adds a new data object to the record in specific thread (recommended).
      * 
      * @param data              the data object to add
      * 
@@ -403,7 +405,7 @@ public class Recorder
     }
 
     /**
-     * Deletes the record in ui thread.
+     * Deletes the record in ui thread (not recommended use directly).
      * 
      * @return                  whether the record is deleted successfully
      * 
@@ -416,7 +418,7 @@ public class Recorder
     }
 
     /**
-     * Deletes the record in a specific thread.
+     * Deletes the record in a specific thread (recommended).
      * 
      * @return                  whether the record is deleted successfully
      * 
@@ -429,7 +431,7 @@ public class Recorder
     }
 
     /**
-     * Returns all data objects in the record in ui thread.
+     * Returns all data objects in the record in ui thread (not recommended use directly).
      * 
      * @return                  all data objects in the record
      * 
@@ -453,7 +455,7 @@ public class Recorder
     }
 
     /**
-     * Returns all data objects in the record in specific thread.
+     * Returns all data objects in the record in specific thread (recommended).
      * 
      * @return                  all data objects in the record
      * 
@@ -466,7 +468,7 @@ public class Recorder
     }
 
     /**
-     * Returns the JSONObject representation of this Recorder object in ui thread.
+     * Returns the JSONObject representation of this Recorder object in ui thread (not recommended use directly).
      * 
      * @return                  the JSONObject representation of this Recorder object
      * 
@@ -492,7 +494,7 @@ public class Recorder
     }
 
     /**
-     * Returns the JSONObject representation of this Recorder object in a specific thread.
+     * Returns the JSONObject representation of this Recorder object in a specific thread (recommended).
      * 
      * @return                  the JSONObject representation of this Recorder object
      * 
@@ -583,22 +585,21 @@ public class Recorder
 
     public static final class NumberResponse extends Recorder
     {
-        private final StreamingAggregator.MO mo3;
-        private final StreamingAggregator.AO ao5;
-        private final StreamingAggregator.AO ao12;
-        private final StreamingAggregator.AO ao100;
-
         public final Data.Statics<Object> all;
         public final Data.Statics<Double> MO3;
         public final Data.Statics<Double> AO5;
         public final Data.Statics<Double> AO12;
         public final Data.Statics<Double> AO100;
 
+        private final StreamingAggregator.MO mo3;
+        private final StreamingAggregator.AO ao5;
+        private final StreamingAggregator.AO ao12;
+        private final StreamingAggregator.AO ao100;
+
         private final JSONObject MO3Json;
         private final JSONObject AO5Json;
         private final JSONObject AO12Json;
         private final JSONObject AO100Json;
-
         private final LinkedList<Double> last100Data;
 
         // create new instance
@@ -693,7 +694,7 @@ public class Recorder
             );
         }
         /**
-         * Adds a new data, which is "Do not finished"
+         * Adds a new data in specific thread (recommended), which is "Do not finished"
          *
          * @throws Exception    if an error occurs while adding the data
          */
@@ -704,7 +705,7 @@ public class Recorder
         }
 
         /**
-         * Adds a new data object with the given time to the record.
+         * Adds a new data object with the given time to the record in specific thread (recommended).
          * 
          * @param time          the time to include in the data object
          * 
@@ -718,7 +719,7 @@ public class Recorder
         }
 
         /**
-         * Adds a new data object with the given time to the record.
+         * Adds a new data object with the given time to the record in ui thread (not recommended use directly).
          * 
          * @param data          the data object to include in the record
          * 

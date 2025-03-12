@@ -52,10 +52,8 @@ public final class FileHelper
      * <p>
      * This method is private, and should only be called within this class.
      * <p>
-     * 
-     * @throws Exception        if the current thread is the Main thread
      */
-    private static void threadCheck() throws Exception
+    private static void threadCheck()
     {
         final String name = Thread.currentThread().getName().toLowerCase();
 
@@ -123,10 +121,9 @@ public final class FileHelper
      * 
      * @param directory         target file
      * @return                  whether the directory is created successfully
-     * @throws Exception        if error occurs, for example no such parent directory, permission denied
      */
     @SyncTask
-    public static boolean createNewDirectories(final File directory) throws Exception
+    public static boolean createNewDirectories(final File directory)
     {
         threadCheck();
 
@@ -138,10 +135,9 @@ public final class FileHelper
      * 
      * @param file              target file
      * @return                  whether the file is deleted successfully
-     * @throws Exception        if error occurs, for example no such file, permission denied
      */
     @SyncTask
-    public static boolean deleteFile(final File file) throws Exception
+    public static boolean deleteFile(final File file)
     {
         threadCheck();
 
@@ -156,10 +152,9 @@ public final class FileHelper
      *                          if false, delete all the content in the folder, not include the root folder
      *
      * @return                  whether the directory was deleted successfully
-     * @throws Exception        if an error occurs, such as the directory not existing or permission issues
      */
     @SyncTask
-    public static boolean deleteDirectories(final File directory, boolean deleteRoot) throws Exception
+    public static boolean deleteDirectories(final File directory, boolean deleteRoot)
     {
         threadCheck();
 
@@ -209,10 +204,9 @@ public final class FileHelper
      * 
      * @param directory         target directory to list files from
      * @return                  an array of files in the directory
-     * @throws Exception        if error occurs, for example no such directory, permission denied
      */
     @SyncTask
-    public static File[] listFiles(final File directory) throws Exception
+    public static File[] listFiles(final File directory)
     {
         threadCheck();
 
@@ -225,10 +219,9 @@ public final class FileHelper
      * @param directory         target directory to list files from
      * @param regex             regex to filter the files
      * @return                  an array of files in the directory that match the regex
-     * @throws Exception        if error occurs, for example no such directory, permission denied
      */
     @SyncTask
-    public static File[] listFiles(final File directory, String regex) throws Exception
+    public static File[] listFiles(final File directory, String regex)
     {
         threadCheck();
 

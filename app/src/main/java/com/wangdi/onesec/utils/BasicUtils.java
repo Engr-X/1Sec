@@ -17,6 +17,8 @@
 
 package com.wangdi.onesec.utils;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.concurrent.Future;
 
 /**
@@ -44,6 +46,14 @@ public final class BasicUtils
             sb.append(obj);
 
         return sb.toString();
+    }
+
+    public static String getStackTraceAsString(Exception e)
+    {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        return sw.toString();
     }
 
     /**

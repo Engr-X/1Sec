@@ -90,17 +90,6 @@ public class Data
         }
     }
 
-    /**
-     * If the given Double value is null or DNF, return null; otherwise return the value itself.
-     *
-     * @param value             the Double value to be formatted
-     * @return                  the formatted Double value
-     */
-    public static Double format(Double value)
-    {
-        return (value == null || value == DNF) ? null : value;
-    }
-
     public static final byte GENERAL_DATA_TYPE = -1;
     public static final byte NUMBER_RESPONSE_TYPE = 0;
 
@@ -113,6 +102,17 @@ public class Data
     public static final String NUMBER_RESPONSE_SERIAL = "serial";
     public static final String NUMBER_RESPONSE_TIME = "time";
     private static final Set<String> NUMBER_RESPONSE_PARAM = new HashSet<>() {{this.add(NUMBER_RESPONSE_SERIAL); this.add(NUMBER_RESPONSE_TIME);}};
+
+    /**
+     * If the given Double value is null or DNF, return null; otherwise return the value itself.
+     *
+     * @param value             the Double value to be formatted
+     * @return                  the formatted Double value
+     */
+    public static Double format(Double value)
+    {
+        return (value == null || value == DNF) ? null : value;
+    }
 
     /**
      * Create a Data object according to the given parameters and data type.
