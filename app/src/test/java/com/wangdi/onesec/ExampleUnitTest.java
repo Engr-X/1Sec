@@ -5,6 +5,7 @@ import com.wangdi.onesec.data.Data;
 import com.wangdi.onesec.data.Recorder;
 import com.wangdi.onesec.utils.Logger;
 
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.internal.management.ManagementFactory;
 
@@ -35,12 +36,14 @@ public class ExampleUnitTest
     @SuppressWarnings("null")
     public void test() throws Exception
     {
-        List<Double> data =  List.of(Data.DNF, 0.79, 0.57, 0.32, 1.37, 1.48, Data.DNF, Data.DNF, 1.04, 0.85,
-                                1.13, 0.98, 1.44, 0.99, 0.94, 1.25, 1.36, 1.26, 1.31, 1.54, 2.36);
+        //List<Double> data =  List.of(Data.DNF, 0.79, 0.57, 0.32, 1.37, 1.48, Data.DNF, Data.DNF, 1.04, 0.85,
+                                    //1.13, 0.98, 1.44, 0.99, 0.94, 1.25, 1.36, 1.26, 1.31, 1.54, 2.36);
+
+        List<Double> data =  List.of(Data.DNF,Data.DNF,2.00,2.00,2.00);
 
         // test analyser
         Analyser analyser = new Analyser(data);
-        System.out.println(analyser.AO12.best);
+        System.out.println(analyser.MO3data);
 
         // test recorder
         final Recorder r = Recorder.auto(new File("C:\\Users\\wd200\\Desktop\\root"), 10, Data.NUMBER_RESPONSE_TYPE);
