@@ -15,7 +15,7 @@
  *
  */
 
-package com.wangdi.onesec;
+package com.wangdi.onesec.interfaces;
 
 /**
  * Indicates that a method or constructor declaration is intended to run in thread pool rather

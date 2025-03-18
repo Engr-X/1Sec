@@ -1,7 +1,19 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
-    <style name="Base.Theme.Onesec" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Theme.1Sec.Dark" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- 页面背景全白 -->
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/black</item>
+
+        <!-- 状态栏透明 + 深色图标 -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- 导航栏透明 + 深色图标 -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightNavigationBar">false</item>
+
+        <!-- 强制绘制系统栏背景（确保透明生效） -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 </resources>

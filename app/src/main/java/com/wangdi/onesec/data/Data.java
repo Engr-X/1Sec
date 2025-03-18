@@ -24,22 +24,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.DataFormatException;
 
-import com.wangdi.onesec.NotImplementException;
-import com.wangdi.onesec.utils.BasicUtils;
+import org.json.JSONObject;
 
 import androidx.annotation.NonNull;
 
-import org.json.JSONObject;
+import com.wangdi.onesec.exceptions.NotImplementedException;
+import com.wangdi.onesec.utils.BasicUtils;
 
 /**
- * <p>
  * Data class is aimed to record people's sessions in 1Sec APP.
  * The Data class can be initialised by Map or by a Json object.
  * The NumberResponse class record people's reaction time in number test session
  *
  * @see NumberResponse
- * </p>
- *
  * @author Di Wang
  * @version 1.0
  */
@@ -237,7 +234,7 @@ public class Data
      */
     public byte compare(final Data other) throws Exception
     {
-        throw new NotImplementException("Function byte Data.compare[Data] is not implemented");
+        throw new NotImplementedException("Function byte Data.compare[Data] is not implemented");
     }
 
     /**

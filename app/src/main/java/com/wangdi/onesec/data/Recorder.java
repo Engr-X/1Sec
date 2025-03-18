@@ -28,28 +28,31 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.DataFormatException;
 
-import androidx.annotation.NonNull;
-
-import com.wangdi.onesec.AsyncTask;
-import com.wangdi.onesec.SyncTask;
-import com.wangdi.onesec.utils.BasicUtils;
-import com.wangdi.onesec.utils.FileHelper;
-
 import org.javatuples.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import androidx.annotation.NonNull;
+
+import com.wangdi.onesec.interfaces.AsyncTask;
+import com.wangdi.onesec.interfaces.SyncTask;
+import com.wangdi.onesec.utils.BasicUtils;
+import com.wangdi.onesec.utils.FileHelper;
+
 /**
+ * <p>
  * The recorder class is aimed to not only record all the session data, but also provide some methods to
  * write these data to files (The record data also can be load from these files).
+ * </p>
  *
  * <p>
  * Furthermore, the recorder have ability to analyse all the data superficially.
  * For example, find the best data it contains.
  * </p>
  * 
+ * <p>
  * This class's method contain I / O operations, so it should not be called in Main thread.
- *
+ * </p>
  *
  * @see NumberResponse
  * @author Di Wang

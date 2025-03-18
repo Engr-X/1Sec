@@ -1,0 +1,8 @@
+{
+    "global.app.name": "1Sec",
+    "global.app.author": "Ethan Leng, Murphy Wang, Zee, Julius, Leslie",
+
+    "core.exception.report": "report",
+    "core.exception.close": "close"
+
+}

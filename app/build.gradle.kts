@@ -33,13 +33,12 @@ android {
 
 dependencies {
     implementation(libs.javatuples)
-    implementation(libs.fastjson2)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.json)
 
-    testImplementation("org.json:json:20180130")
     //testImplementation(libs.fastjson2)
     testImplementation(libs.junit)
 

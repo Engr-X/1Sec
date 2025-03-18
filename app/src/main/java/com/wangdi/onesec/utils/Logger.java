@@ -17,26 +17,19 @@
 
 package com.wangdi.onesec.utils;
 
-import static android.Manifest.permission_group.CALENDAR;
-
-import android.annotation.SuppressLint;
-import android.util.Log;
-
-import com.wangdi.onesec.AsyncTask;
-import com.wangdi.onesec.SyncTask;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.transform.Source;
+import android.annotation.SuppressLint;
+
+import com.wangdi.onesec.interfaces.AsyncTask;
+import com.wangdi.onesec.interfaces.SyncTask;
 
 /**
  * Logger class is used to print error messages or logs in console,
@@ -45,7 +38,7 @@ import javax.xml.transform.Source;
  *
  *
  * @author Di Wang
- * @version 1.0
+ * @version 1.1
  */
 
 public final class Logger
@@ -194,6 +187,10 @@ public final class Logger
         this.clazz = clazz;
         this.logFormat = format;
         this.directory = directory;
+
+        if (!this.directory.exists() && !this.directory.mkdirs())
+            throw new IOException("Create directory false: " + this.directory.getAbsolutePath());
+
         this.currentFile = new File(directory, DATA_FORMAT.format(new Date()) + LOGFILE_EXTENSION);
 
         if (!this.currentFile.exists() && !FileHelper.createNewFile(this.currentFile))
@@ -255,8 +252,6 @@ public final class Logger
      * debug messages in ui thread (not recommended use directly).
      * 
      * @param messages          the messages to write
-     * 
-     * @throws Exception        if an error occurs during writing
      */
     @SyncTask
     private void debugSync(Object... messages)
@@ -272,8 +267,6 @@ public final class Logger
      * info messages in ui thread (not recommended use directly).
      * 
      * @param messages          the messages to write
-     * 
-     * @throws Exception        if an error occurs during writing
      */
     @SyncTask
     private void infoSync(Object... messages)
@@ -289,8 +282,6 @@ public final class Logger
      * info messages in specific thread (recommended).
      * 
      * @param messages          the messages to write
-     * 
-     * @throws Exception        if an error occurs during writing
      */
     @AsyncTask
     public void info(Object... messages)
@@ -303,8 +294,6 @@ public final class Logger
      * warning messages in ui thread (not recommended use directly).
      * 
      * @param messages          the messages to write
-     * 
-     * @throws Exception        if an error occurs during writing
      */
     @SyncTask
     private void warningSync(Object... messages)
@@ -338,8 +327,6 @@ public final class Logger
      * error messages in ui thread (not recommended use directly).
      * 
      * @param messages          the messages to write
-     * 
-     * @throws Exception        if an error occurs during writing
      */
     @SyncTask
     private void errorSync(Object... messages)
@@ -373,8 +360,6 @@ public final class Logger
      * fatal messages in ui thread (not recommended use directly).
      * 
      * @param messages          the messages to write
-     * 
-     * @throws Exception        if an error occurs during writing
      */
     @SyncTask
     private void fatalSync(Object... messages)
@@ -403,6 +388,27 @@ public final class Logger
         EXECUTOR.submit(() -> this.fatalSync(messages));
     }
 
+    /**
+     * Retrieves the content of the current log file asynchronously.
+     * 
+     * @return                  the content of the current log file
+     * @throws Exception        if an error occurs while reading the log file
+     */
+    @AsyncTask
+    public String getLogContent() throws Exception
+    {
+        return BasicUtils.handleFutureResult(EXECUTOR.submit(() -> FileHelper.read(this.currentFile)));
+    }
+
+    /**
+     * Formats a string given the current date, time, the class associated with the logger
+     * and the given messages.
+     * 
+     * @param level             the level of the message
+     * @param messages          the messages to be logged
+     * 
+     * @return                  the formatted string
+     */
     @SyncTask
     private String getString(byte level, Object... messages)
     {
@@ -424,35 +430,16 @@ public final class Logger
 
         final StringBuilder sb = new StringBuilder(logFormat);
 
-        replaceAll(sb, YEAR_KEY, String.valueOf(year));
-        replaceAll(sb, MONTH_KEY, monthStr);
-        replaceAll(sb, DAY_KEY, dayStr);
-        replaceAll(sb, HOUR_KEY, hourStr);
-        replaceAll(sb, MINUTE_KEY, minuteStr);
-        replaceAll(sb, SECOND_KEY, secondStr);
-        replaceAll(sb, CLASS_KEY, className);
-        replaceAll(sb, LEVEL_KEY, levelStr);
-        replaceAll(sb, MESSAGE_KEY, BasicUtils.combined(messages));
+        BasicUtils.replaceAll(sb, YEAR_KEY, String.valueOf(year));
+        BasicUtils.replaceAll(sb, MONTH_KEY, monthStr);
+        BasicUtils.replaceAll(sb, DAY_KEY, dayStr);
+        BasicUtils.replaceAll(sb, HOUR_KEY, hourStr);
+        BasicUtils.replaceAll(sb, MINUTE_KEY, minuteStr);
+        BasicUtils.replaceAll(sb, SECOND_KEY, secondStr);
+        BasicUtils.replaceAll(sb, CLASS_KEY, className);
+        BasicUtils.replaceAll(sb, LEVEL_KEY, levelStr);
+        BasicUtils.replaceAll(sb, MESSAGE_KEY, BasicUtils.combined(messages));
 
         return sb.toString();
-    }
-
-    /**
-     * Replace all occurrences of a key in a StringBuilder with a value.
-     * 
-     * @param sb      the StringBuilder to replace in
-     * @param key     the key to replace
-     * @param value   the value to replace with
-     */
-    @SyncTask
-    private void replaceAll(StringBuilder sb, String key, String value)
-    {
-        int index = sb.indexOf(key);
-
-        while (index != -1)
-        {
-            sb.replace(index, index + key.length(), value);
-            index = sb.indexOf(key, index + value.length());
-        }
     }
 }

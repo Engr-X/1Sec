@@ -1,5 +1,7 @@
 package com.wangdi.onesec;
 
+import android.content.res.AssetManager;
+
 import com.wangdi.onesec.data.Analyser;
 import com.wangdi.onesec.data.Data;
 import com.wangdi.onesec.data.Recorder;
@@ -36,10 +38,8 @@ public class ExampleUnitTest
     @SuppressWarnings("null")
     public void test() throws Exception
     {
-        //List<Double> data =  List.of(Data.DNF, 0.79, 0.57, 0.32, 1.37, 1.48, Data.DNF, Data.DNF, 1.04, 0.85,
-                                    //1.13, 0.98, 1.44, 0.99, 0.94, 1.25, 1.36, 1.26, 1.31, 1.54, 2.36);
-
-        List<Double> data =  List.of(Data.DNF,Data.DNF,2.00,2.00,2.00);
+        List<Double> data =  List.of(Data.DNF, 0.79, 0.57, 0.32, 1.37, 1.48, Data.DNF, Data.DNF, 1.04, 0.85,
+                                     1.13, 0.98, 1.44, 0.99, 0.94, 1.25, 1.36, 1.26, 1.31, 1.54, 2.36);
 
         // test analyser
         Analyser analyser = new Analyser(data);

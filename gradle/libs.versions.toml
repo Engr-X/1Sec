@@ -1,7 +1,8 @@
 [versions]
 agp = "8.5.1"
+json = "20250107"
 javatuples = "1.2"
-fastjson2 = "2.0.56"
+#fastjson2 = "2.0.56"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
@@ -9,10 +10,12 @@ appcompat = "1.6.1"
 material = "1.10.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
+testng = "6.9.6"
 
 [libraries]
+json = { module = "org.json:json", version.ref = "json" }
 javatuples = { module = "org.javatuples:javatuples", version.ref = "javatuples"}
-fastjson2 = { module = "com.alibaba.fastjson2:fastjson2", version.ref = "fastjson2" }
+#fastjson2 = { module = "com.alibaba.fastjson2:fastjson2", version.ref = "fastjson2" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -20,6 +23,7 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

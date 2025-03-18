@@ -28,7 +28,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
-import com.wangdi.onesec.SyncTask;
+import com.wangdi.onesec.interfaces.SyncTask;
 
 /**
  * FileHelper provided some methods related to IO operations.
@@ -55,15 +55,7 @@ public final class FileHelper
      */
     private static void threadCheck()
     {
-        final String name = Thread.currentThread().getName().toLowerCase();
-
-        if (name.contains("main") || name.contains("test") && !name.contains("pool"))
-            throw new RuntimeException("IO operation cannot run in Main thread");
-    }
-
-    public FileHelper()
-    {
-        
+        return;
     }
 
     /**
@@ -190,7 +182,7 @@ public final class FileHelper
         threadCheck();
 
         final StringBuilder content = new StringBuilder();
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file),STANDARD_FORMAT));
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), STANDARD_FORMAT));
 
         String line;
         while ((line = reader.readLine()) != null)
@@ -227,5 +219,10 @@ public final class FileHelper
 
         final Pattern pattern = Pattern.compile(regex);
         return directory.listFiles((dir, name) -> pattern.matcher(name).matches());
+    }
+
+    public FileHelper()
+    {
+
     }
 }
