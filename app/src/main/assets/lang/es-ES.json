@@ -1,4 +1,15 @@
 {
     "global.app.name": "1Sec",
-    "global.app.author": "Epinore Murphy Zee Jks"
+    "global.app.upper_name": "ONE SECOND",
+    "global.app.author": "Epinore Murphy Zee Jks",
+
+    "homepage.welcome": "Hola",
+
+    "homepage.solo.title": "Unu-ludanto",
+    "homepage.solo.classical": "Klasika reĝimo",
+    "homepage.solo.challenge": "Defiĝo reĝimo",
+    "homepage.sole.blind": "Blinda reĝimo",
+    "homepage.sole.double_tap": "Klaku rapidon",
+
+    "homepage.multiplayer": "multijugador"
 }

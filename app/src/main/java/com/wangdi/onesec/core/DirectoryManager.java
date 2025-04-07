@@ -13,15 +13,25 @@
  *
  *
  *
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  */
 
-package com.wangdi.onesec.utils;
+package com.wangdi.onesec.core;
 
 import java.io.File;
 
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+
+import com.wangdi.onesec.utils.BasicUtils;
 
 /**
  * This class aims to manage the directories of the app, both the internal and external ones.
@@ -33,6 +43,7 @@ import androidx.annotation.NonNull;
 
 public final class DirectoryManager
 {
+    public static final String DATA_DIRECTORY = "data";
     public static final String LOG_DIRECTORY = "logs";
 
     public final File rootDirectory;
@@ -43,14 +54,13 @@ public final class DirectoryManager
     public static DirectoryManager getInternal(final Context context)
     {
         File root = context.getFilesDir();
-        return new DirectoryManager(root, context.getDataDir(), context.getCacheDir(), new File(root, LOG_DIRECTORY));
-
+        return new DirectoryManager(root, new File(root, DATA_DIRECTORY), context.getCacheDir(), new File(root, LOG_DIRECTORY));
     }
 
     public static DirectoryManager getExternal(final Context context)
     {
-        File root = context.getExternalCacheDir();
-        return new DirectoryManager(root, null, null, null);
+        // TODO
+        return new DirectoryManager(null, null, null, null);
     }
 
     private DirectoryManager(File rootDirectory, File dataDirectory,

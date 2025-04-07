@@ -13,6 +13,14 @@
  *
  *
  *
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  */
 
 package com.wangdi.onesec.data;
@@ -60,6 +68,17 @@ public abstract class StreamingAggregator<T extends Comparable<T>>
         this.max = this.min = null;
     }
 
+    public StreamingAggregator(Deque<T> deque, Comparator<T> comparator, T max, T min, int size)
+    {
+        this.size = size;
+        this.comparator = comparator;
+        this.stream = deque;
+
+        this.index = deque.size();
+        this.max = max;
+        this.min = min;
+    }
+
     /**
      * Adds the given value to the stream and updates the minimum and maximum
      * values if necessary. This method is abstract and should be implemented
@@ -101,22 +120,50 @@ public abstract class StreamingAggregator<T extends Comparable<T>>
         return this.max;
     }
 
+    /**
+     * Returns the valid size of the current stream of data.
+     * This size excludes any entries that are marked as DNF (Did Not Finish).
+     *
+     * @return                  the valid size of the data stream, excluding DNF entries
+     */
+
+    public abstract int getValidSize();
+
     public static final class MO extends StreamingAggregator<Double>
     {
-        private int effectiveIndex;
+        private int validSize;
         private double partSum1;
         private int partSum2;
         private Double average;
+
+        public MO(Deque<Double> deque, Double max, Double min, Double average, int size, int validSize)
+        {
+            super(deque, Double::compare, max, min, size);
+
+            this.validSize = validSize;
+            this.partSum1 = 0.0;
+            this.partSum2 = 0;
+
+            for (final Double value : this.stream)
+            {
+                this.updateSum(value, true);
+                this.updatePeak(value);
+            }
+
+            this.average = average;
+        }
 
         public MO(int size)
         {
             super(Double::compare, size);
 
-            this.effectiveIndex = 0;
+            this.validSize = 0;
             this.partSum1 = 0.0;
             this.partSum2 = 0;
             this.average = null;
         }
+
+
 
         /**
          * Adds the given value to the stream and updates the minimum, maximum, and average
@@ -147,6 +194,18 @@ public abstract class StreamingAggregator<T extends Comparable<T>>
             this.updatePeak(returnValue);
             this.updateAverage(returnValue);
             return returnValue;
+        }
+
+        /**
+         * Returns the valid size of the current stream of data.
+         * This size excludes any entries that are marked as DNF (Did Not Finish).
+         *
+         * @return the valid size of the data stream, excluding DNF entries
+         */
+        @Override
+        public int getValidSize()
+        {
+            return this.validSize;
         }
 
         /**
@@ -194,8 +253,8 @@ public abstract class StreamingAggregator<T extends Comparable<T>>
             if (value == null || value == Data.DNF) return;
 
             if (this.average == null) this.average = 0.0;
-            this.average = this.average * (this.effectiveIndex++) + value;
-            this.average /= this.effectiveIndex;
+            this.average = this.average * (this.validSize++) + value;
+            this.average /= this.validSize;
         }
 
         /**
@@ -239,7 +298,7 @@ public abstract class StreamingAggregator<T extends Comparable<T>>
 
     public static final class AO extends StreamingAggregator<Double>
     {
-        private int effectiveIndex;
+        private int validSize;
         private double partSum1;
         private int partSum2;
         private Double average;
@@ -247,12 +306,32 @@ public abstract class StreamingAggregator<T extends Comparable<T>>
         private final int realSize;
         private final TreeMap<Double, Integer> map;
 
+        public AO(Deque<Double> deque, Double max, Double min, Double average, int size, int validSize)
+        {
+            super(deque, Double::compare, max, min, size);
+
+            this.validSize = validSize;
+            this.partSum1 = 0.0;
+            this.partSum2 = 0;
+            this.map = new TreeMap<>();
+
+            for (final Double value : this.stream)
+            {
+                this.updateSum(value, true);
+                this.updateMap(value, true);
+                this.updatePeak(value);
+            }
+
+            this.average = average;
+            this.realSize = size - 2;
+        }
+
         public AO(int size)
         {
             super(Double::compare, size);
 
             this.realSize = size - 2;
-            this.effectiveIndex = 0;
+            this.validSize = 0;
             this.partSum1 = 0.0;
             this.partSum2 = 0;
             this.average = null;
@@ -293,6 +372,18 @@ public abstract class StreamingAggregator<T extends Comparable<T>>
             this.updatePeak(returnValue);
             this.updateAverage(returnValue);
             return returnValue;
+        }
+
+        /**
+         * Returns the valid size of the current stream of data.
+         * This size excludes any entries that are marked as DNF (Did Not Finish).
+         *
+         * @return the valid size of the data stream, excluding DNF entries
+         */
+        @Override
+        public int getValidSize()
+        {
+            return this.validSize;
         }
 
         /**
@@ -364,8 +455,8 @@ public abstract class StreamingAggregator<T extends Comparable<T>>
             if (value == null || value == Data.DNF) return;
 
             if (this.average == null) this.average = 0.0;
-            this.average = this.average * (this.effectiveIndex++) + value;
-            this.average /= this.effectiveIndex;
+            this.average = this.average * (this.validSize++) + value;
+            this.average /= this.validSize;
         }
 
         /**

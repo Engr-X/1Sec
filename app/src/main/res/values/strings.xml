@@ -1,3 +1,45 @@
+<!-- 
+    This XML defines a string resource used for UI
+    
+    Created by [Murphy Wang, Yichen Len]
+-->
+
 <resources>
-    <string name="app_name">1sec</string>
+    <string name="global.app.raw_name">1Sec</string>
+    <string name="global.app.name">global.app.name</string>
+    <string name="global.app.upper_name">global.app.upper_name</string>
+    <string name="global.app.author">global.app.author</string>
+
+    <string name="global.app.int">%d</string>
+    <string name="global.app.4digits_double">%.4f</string>
+    <string name="global.app.string">%s</string>
+
+    <string name="homepage.personal.welcome_back">homepage.personal.welcome_back</string>
+    <string name="homepage.personal.name">%s</string>
+    <string name="homepage.personal.level">Lv. %d</string>
+    <string name="homepage.personal.classical_best">homepage.personal.classical_best</string>
+    <string name="homepage.personal.challenge_count">homepage.personal.challenge_count</string>
+    <string name="homepage.personal.double_tap_best">homepage.personal.double_tap_best</string>
+
+    <string name="homepage.solo.title">homepage.solo.title</string>
+    <string name="homepage.solo.classical">homepage.solo.classical</string>
+    <string name="homepage.solo.challenge">homepage.solo.challenge</string>
+    <string name="homepage.solo.blind">homepage.sole.blind</string>
+    <string name="homepage.solo.double_tap">homepage.sole.double_tap</string>
+
+    <string name="homepage.multiplayer.title">homepage.multiplayer.title</string>
+    <string name="homepage.multiplayer.classical">homepage.multiplayer.classical</string>
+    <string name="homepage.multiplayer.cps">homepage.multiplayer.cps</string>
+    <string name="homepage.multiplayer.reaction">homepage.multiplayer.reaction</string>
+    <string name="homepage.multiplayer.blind">homepage.multiplayer.blind</string>
+
+    <string name="solo_classic.title">solo.classic.title</string>
+    <string name="solo_classic.timer.aim">solo_classic.timer.aim: %.4f</string>
+    <string name="solo_classic.timer.difference">(%s)</string>
+    <string name="solo_classic.timer.average">solo_classic.timer.average: %s</string>
+
+    <string name="solo_classic.data.best">solo_classic.data.best: %s</string>
+    <string name="solo_classic.data.current_ao5">solo_classic.data.current_ao5: %s</string>
+    <string name="solo_classic.data.current_ao12">solo_classic.data.current_ao12: %s</string>
+    <string name="solo_classic.data.current_ao100">solo_classic.data.current_ao100: %s</string>
 </resources>

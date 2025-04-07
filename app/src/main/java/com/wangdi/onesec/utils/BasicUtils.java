@@ -13,12 +13,22 @@
  *
  *
  *
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  */
 
 package com.wangdi.onesec.utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -148,6 +158,45 @@ public final class BasicUtils
             Thread.currentThread().interrupt();
             throw new Exception("Operation interrupted", e);
         }
+    }
+
+    /**
+     * Extracts a sublist from the given list, starting from the specified start index (inclusive) 
+     * to the specified end index (exclusive).
+     *
+     * @param array             The list from which to extract the sublist.
+     * @param start             The starting index (inclusive) of the sublist.
+     * @param end               The ending index (exclusive) of the sublist.
+     * @return                  A list containing the elements from the start index to the end index.
+     */
+    public static <T> LinkedList<T> at(List<T> array, int start, int end)
+    {
+        int index = 0;
+        final LinkedList<T> result = new LinkedList<>();
+
+        for (T t : array)
+        {
+            if (start <= index && index < end)
+                result.add(t);
+
+            index++;
+        }
+
+        return result;
+    }
+
+
+    /**
+     * Returns a list containing the last 'number' elements of the given list.
+     *
+     * @param array             The list from which to extract the sublist.
+     * @param number            The number of elements to return from the end of the list.
+     * @return                  A list containing the last 'number' elements of the given list.
+     */
+    public static <T> LinkedList<T> last(List<T> array, int number)
+    {
+        final int size = array.size();
+        return (number > size) ? new LinkedList<>(array) : at(array, size - number, size);
     }
 
     public BasicUtils()

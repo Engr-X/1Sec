@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    This XML defines a drawable resource for a rectangle shape with a gradient.
+    Used for light app theme.
+
+    Created by [Di Wang]
+-->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <gradient
+        android:startColor="#FFEBFAFF"
+        android:endColor="#FFFFFFFF"
+        android:angle="90" />
+
+    <corners android:radius="0dp"/>
+</shape>

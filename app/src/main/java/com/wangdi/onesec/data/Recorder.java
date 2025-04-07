@@ -13,6 +13,14 @@
  *
  *
  *
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  */
 
 package com.wangdi.onesec.data;
@@ -21,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -199,7 +208,7 @@ public class Recorder
      * @throws DataFormatException if the recorder is not in the correct format
      */
     @SyncTask
-    private static Recorder autoSync(final File rootDirectory, int groupSize, byte dataType) throws Exception
+    public static Recorder autoSync(final File rootDirectory, int groupSize, byte dataType) throws Exception
     {
         final File[] files = FileHelper.listFiles(rootDirectory);
 
@@ -434,6 +443,17 @@ public class Recorder
     }
 
     /**
+     * Returns the total number of data objects in the record in ui thread (not recommended use directly).
+     * 
+     * @return                  the total number of data objects in the record
+     */
+    public int getSize()
+    {
+        try {return this.manifestJson.has(DATA_SIZE_KEY) ? this.manifestJson.getInt(DATA_SIZE_KEY) : 0;}
+        catch (Exception e) {System.err.println(BasicUtils.getStackTraceAsString(e)); return 0;}
+    }
+
+    /**
      * Returns all data objects in the record in ui thread (not recommended use directly).
      * 
      * @return                  all data objects in the record
@@ -635,11 +655,6 @@ public class Recorder
         {
             super(directory, Data.NUMBER_RESPONSE_TYPE);
 
-            this.mo3 = new StreamingAggregator.MO(3);
-            this.ao5 = new StreamingAggregator.AO(5);
-            this.ao12 = new StreamingAggregator.AO(12);
-            this.ao100 = new StreamingAggregator.AO(100);
-
             this.MO3Json = this.manifestJson.getJSONObject(MO3_KEY);
             this.AO5Json = this.manifestJson.getJSONObject(AO5_KEY);
             this.AO12Json = this.manifestJson.getJSONObject(AO12_KEY);
@@ -661,9 +676,41 @@ public class Recorder
                     final int index = ((Data.NumberResponse)(data)).getSerial();
 
                     if (index >= startIndex && index <= endIndex)
-                        this.last100Data.add(((Data.NumberResponse)(data)).getTime());
+                    {
+                        final double time = ((Data.NumberResponse) (data)).getTime();
+                        this.last100Data.add(time);
+                    }
                 }
             }
+
+            final Deque<Double> mo3Deque = BasicUtils.last(this.last100Data, 3);
+            final Deque<Double> ao5Deque = BasicUtils.last(this.last100Data, 5);
+            final Deque<Double> ao12Deque = BasicUtils.last(this.last100Data, 12);
+            final Deque<Double> ao100Deque = new LinkedList<>(this.last100Data);
+
+            this.mo3 = new StreamingAggregator.MO(mo3Deque,
+                    this.MO3Json.has(WORST_KEY) ? this.MO3Json.getDouble(WORST_KEY) : null,
+                    this.MO3Json.has(BEST_KEY) ? this.MO3Json.getDouble(BEST_KEY) : null,
+                    this.MO3Json.has(AVERAGE_KEY) ? this.MO3Json.getDouble(AVERAGE_KEY) : null, 3,
+                    this.MO3Json.has(VALID_SIZE_KEY) ? this.MO3Json.getInt(VALID_SIZE_KEY) : 0);
+
+            this.ao5 = new StreamingAggregator.AO(ao5Deque,
+                    this.AO5Json.has(WORST_KEY) ? this.AO5Json.getDouble(WORST_KEY) : null,
+                    this.AO5Json.has(BEST_KEY) ? this.AO5Json.getDouble(BEST_KEY) : null,
+                    this.AO5Json.has(AVERAGE_KEY) ? this.AO5Json.getDouble(AVERAGE_KEY) : null, 5,
+                    this.AO5Json.has(VALID_SIZE_KEY) ? this.AO5Json.getInt(VALID_SIZE_KEY) : 0);
+
+            this.ao12 = new StreamingAggregator.AO(ao12Deque,
+                    this.AO12Json.has(WORST_KEY) ? this.AO12Json.getDouble(WORST_KEY) : null,
+                    this.AO12Json.has(BEST_KEY) ? this.AO12Json.getDouble(BEST_KEY) : null,
+                    this.AO12Json.has(AVERAGE_KEY) ? this.AO12Json.getDouble(AVERAGE_KEY) : null, 12,
+                    this.AO12Json.has(VALID_SIZE_KEY) ? this.AO12Json.getInt(VALID_SIZE_KEY) : 0);
+
+            this.ao100 = new StreamingAggregator.AO(ao100Deque,
+                    this.AO100Json.has(WORST_KEY) ? this.AO100Json.getDouble(WORST_KEY) : null,
+                    this.AO100Json.has(BEST_KEY) ? this.AO100Json.getDouble(BEST_KEY) : null,
+                    this.AO100Json.has(AVERAGE_KEY) ? this.AO100Json.getDouble(AVERAGE_KEY) : null, 100,
+                    this.AO100Json.has(VALID_SIZE_KEY) ? this.AO100Json.getInt(VALID_SIZE_KEY) : 0);
 
             final Double average = this.AllJson.has(AVERAGE_KEY) ? this.AllJson.getDouble(AVERAGE_KEY) : null;
             this.all = new Data.Statics<>(this.current, this.best, this.worst, average);
@@ -800,7 +847,7 @@ public class Recorder
                 }
 
                 final double oldAverage = (this.all.average == null) ? 0.0 : (double)(this.all.average);
-                final double average = (oldAverage * this.validSize + time) / (++this.validSize);
+                final double average = (oldAverage * this.validSize + Math.abs(time)) / (++this.validSize);
                 this.all.average = average;
                 this.AllJson.put(AVERAGE_KEY, average);
                 this.manifestJson.put(VALID_SIZE_KEY, this.validSize);
@@ -820,11 +867,13 @@ public class Recorder
         @SyncTask
         private void updateMO3(double time) throws Exception
         {
-            final Double current = this.mo3.add(time);
+            final Double current = this.mo3.add(Math.abs(time));
             final Double average = this.mo3.getAverage(), best = this.mo3.getMin(), worst = this.mo3.getMax();
             this.MO3.update(current, best, worst, average);
+
+            final int validSize = this.mo3.getValidSize();
             this.MO3Json.put(AVERAGE_KEY, Data.format(average)).put(CURRENT_KEY, Data.format(current))
-                        .put(BEST_KEY, Data.format(best)).put(WORST_KEY, Data.format(worst));
+                        .put(BEST_KEY, Data.format(best)).put(WORST_KEY, Data.format(worst)).put(VALID_SIZE_KEY, validSize);
         }
 
         /**
@@ -840,11 +889,13 @@ public class Recorder
         @SyncTask
         private void updateAO5(double time) throws Exception
         {
-            final Double current = this.ao5.add(time);
+            final Double current = this.ao5.add(Math.abs(time));
             final Double average = this.ao5.getAverage(), best = this.ao5.getMin(), worst = this.ao5.getMax();
             this.AO5.update(current, best, worst, average);
+
+            final int validSize = this.ao5.getValidSize();
             this.AO5Json.put(AVERAGE_KEY, Data.format(average)).put(CURRENT_KEY, Data.format(current))
-                        .put(BEST_KEY, Data.format(best)).put(WORST_KEY, Data.format(worst));
+                        .put(BEST_KEY, Data.format(best)).put(WORST_KEY, Data.format(worst)).put(VALID_SIZE_KEY, validSize);
         }
 
         /**
@@ -861,11 +912,14 @@ public class Recorder
         @SyncTask
         private void updateAO12(double time) throws Exception
         {
-            final Double current = this.ao12.add(time);
+            final Double current = this.ao12.add(Math.abs(time));
             final Double average = this.ao12.getAverage(), best = this.ao12.getMin(), worst = this.ao12.getMax();
+            System.out.println(current);
             this.AO12.update(current, best, worst, average);
+
+            final int validSize = this.ao12.getValidSize();
             this.AO12Json.put(AVERAGE_KEY, Data.format(average)).put(CURRENT_KEY, Data.format(current))
-                         .put(BEST_KEY, Data.format(best)).put(WORST_KEY, Data.format(worst));
+                         .put(BEST_KEY, Data.format(best)).put(WORST_KEY, Data.format(worst)).put(VALID_SIZE_KEY, validSize);
         }
 
         /**
@@ -879,11 +933,13 @@ public class Recorder
         @SyncTask
         private void updateAO100(double time) throws Exception
         {
-            final Double current = this.ao100.add(time);
+            final Double current = this.ao100.add(Math.abs(time));
             final Double average = this.ao100.getAverage(), best = this.ao100.getMin(), worst = this.ao100.getMax();
             this.AO100.update(current, best, worst, average);
+
+            final int validSize = this.ao100.getValidSize();
             this.AO100Json.put(AVERAGE_KEY, Data.format(average)).put(CURRENT_KEY, Data.format(current))
-                          .put(BEST_KEY, Data.format(best)).put(WORST_KEY, Data.format(worst));
+                          .put(BEST_KEY, Data.format(best)).put(WORST_KEY, Data.format(worst)).put(VALID_SIZE_KEY, validSize);
         }
     }
 }

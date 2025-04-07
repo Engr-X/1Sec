@@ -13,9 +13,17 @@
  *
  *
  *
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  */
 
-package com.wangdi.onesec.utils;
+package com.wangdi.onesec.core;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +38,8 @@ import android.annotation.SuppressLint;
 
 import com.wangdi.onesec.interfaces.AsyncTask;
 import com.wangdi.onesec.interfaces.SyncTask;
+import com.wangdi.onesec.utils.BasicUtils;
+import com.wangdi.onesec.utils.FileHelper;
 
 /**
  * Logger class is used to print error messages or logs in console,

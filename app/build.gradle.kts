@@ -39,6 +39,8 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.json)
 
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+
     //testImplementation(libs.fastjson2)
     testImplementation(libs.junit)
 

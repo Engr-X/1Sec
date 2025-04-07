@@ -1,8 +1,31 @@
 {
     "global.app.name": "1Sec",
-    "global.app.author": "Ethan Leng, Murphy Wang, Zee, Julius, Leslie",
+    "global.app.upper_name": "ONE SECOND",
+    "global.app.author": "Yichen Leng, Di Wang, Zihan Ma, Ziyuan Jin, Jialai Liu",
 
-    "core.exception.report": "report",
-    "core.exception.close": "close"
+    "homepage.personal.welcome_back": "Welcome Back,",
+    "homepage.personal.classical_best": "Classical's best",
+    "homepage.personal.challenge_count": "Challenge's count",
+    "homepage.personal.double_tap_best": "Best Double Tap",
 
+    "homepage.solo.title": "Solo Competition",
+    "homepage.solo.classical": "Classical",
+    "homepage.solo.challenge": "Challenge",
+    "homepage.sole.blind": "Blind",
+    "homepage.sole.double_tap": "Double Tap",
+
+    "homepage.multiplayer.title": "Multiplayer",
+    "homepage.multiplayer.classical": "Classical",
+    "homepage.multiplayer.cps": "CPS",
+    "homepage.multiplayer.reaction": "Reaction",
+    "homepage.multiplayer.blind": "blind",
+
+
+    "solo.classic.title": "Classical",
+    "solo_classic.timer.aim": "Aim",
+    "solo_classic.timer.average": "Average",
+    "solo_classic.data.best": "best",
+    "solo_classic.data.current_ao5": "AO5",
+    "solo_classic.data.current_ao12": "AO12",
+    "solo_classic.data.current_ao100": "AO100"
 }

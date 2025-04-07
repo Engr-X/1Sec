@@ -1,4 +1,30 @@
 {
-  "global.app.name": "1Sec",
-  "global.app.author": "冷弈晨 王棣 马梓瀚 晋子渊 刘佳来"
+    "global.app.name": "1Sec",
+    "global.app.upper_name": "ONE SECOND",
+    "global.app.author": "冷弈晨 王棣 马梓瀚 晋子渊 刘佳来",
+
+    "homepage.personal.welcome_back": "欢迎回来，",
+    "homepage.personal.classical_best": "经典最佳",
+    "homepage.personal.challenge_count": "挑战次数",
+    "homepage.personal.double_tap_best": "最快手速",
+
+    "homepage.solo.title": "单人竞技",
+    "homepage.solo.classical": "经典",
+    "homepage.solo.challenge": "挑战",
+    "homepage.sole.blind": "闭眼",
+    "homepage.sole.double_tap": "双击",
+
+    "homepage.multiplayer.title": "合作对抗",
+    "homepage.multiplayer.classical": "经典",
+    "homepage.multiplayer.cps": "手速",
+    "homepage.multiplayer.reaction": "反应",
+    "homepage.multiplayer.blind": "闭眼",
+
+    "solo.classic.title": "经典模式",
+    "solo_classic.timer.aim": "目标",
+    "solo_classic.timer.average": "平均",
+    "solo_classic.data.best": "最佳",
+    "solo_classic.data.current_ao5": "AO5",
+    "solo_classic.data.current_ao12": "AO12",
+    "solo_classic.data.current_ao100": "AO100"
 }

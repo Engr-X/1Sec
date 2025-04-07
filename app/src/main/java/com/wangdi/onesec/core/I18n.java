@@ -13,6 +13,14 @@
  *
  *
  *
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  */
 
 package com.wangdi.onesec.core;
@@ -22,17 +30,12 @@ import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 
-import com.wangdi.onesec.data.Data;
-import com.wangdi.onesec.interfaces.AsyncTask;
-import com.wangdi.onesec.interfaces.SyncTask;
 import com.wangdi.onesec.utils.BasicUtils;
 
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,7 +43,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * I18n class (Internationalization) is aim to translate text to different languages,
@@ -62,8 +64,8 @@ public final class I18n
     private static final String LANG_DIRECTORY = "lang/";
 
     private static final String ES_ES_FILE = "es-ES.json";
-    private static final String EN_US_FILE = "en_US.json";
-    private static final String ZH_CN_FILE = "zh_CN.json";
+    private static final String EN_US_FILE = "en-US.json";
+    private static final String ZH_CN_FILE = "zh-CN.json";
 
     private static boolean isInit = false;
     private static AssetManager assetManager = null;
@@ -197,7 +199,7 @@ public final class I18n
      *
      * @return  the language tag, e.g. "en-US" or "zh-CN"
      */
-    private static String getSystemLanguage()
+    public static String getSystemLanguage()
     {
         final Configuration config = Resources.getSystem().getConfiguration();
         final Locale locale = config.getLocales().get(0);

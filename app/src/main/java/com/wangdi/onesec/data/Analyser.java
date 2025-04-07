@@ -13,6 +13,14 @@
  *
  *
  *
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  */
 
 package com.wangdi.onesec.data;
@@ -62,7 +70,7 @@ public final class Analyser
 
         while (it.hasNext())
         {
-            final double value = it.next();
+            final double value = Math.abs(it.next());
 
             if (value != Data.DNF)
             {
